@@ -45,7 +45,7 @@
                     </td>
                     <td>
                         <select th:name="${'authority_' + status.index}">
-                            <option th:if="${authorities != null && !authorities.isEmpty()}" th:each="auth : ${authorities}" th:value="${auth[0]}" th:text="${auth[1]}" th:selected="${auth[1] == item.authority.name()}"></option>
+                            <option th:if="${authorities != null && !authorities.isEmpty()}" th:each="auth : ${authorities}" th:value="${auth[0]}" th:text="${auth[1]}" th:selected="${auth[0] == item.authority.name()}"></option>
                         </select>
                     </td>
                     <td>

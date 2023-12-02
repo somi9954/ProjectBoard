@@ -57,6 +57,12 @@ public class BoardConfigSaveService {
             String bName = utils.getParam("bName_" + idx);
             boolean active = Boolean.parseBoolean(utils.getParam("active_" + idx));
             BoardAuthority authority = BoardAuthority.valueOf(utils.getParam("authority_" + idx));
+
+            board.setBName(bName);
+            board.setActive(active);
+            board.setAuthority(authority);
         }
+
+        boardRepository.flush();
     }
 }

@@ -39,8 +39,19 @@ public class BoardController implements ScriptExceptionProcess {
         return "admin/board/list";
     }
 
+    @DeleteMapping
+    public String deleteList(@RequestParam(name = "idx", required = false) List<Integer> idxes, Model model) {
+
+        // 삭제 성공시 부모창 새로고침
+        model.addAttribute("script", "parent.location.reload();");
+
+        return "common/_execute_script";
+    }
+
     @PatchMapping
     public String updatelist(@RequestParam(name="idx", required = false) List<Integer> idxes, Model model) {
+
+        saveService.update(idxes);
 
         model.addAttribute("script", "parent.location.reload();");
 
