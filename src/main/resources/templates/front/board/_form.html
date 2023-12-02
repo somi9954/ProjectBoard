@@ -5,6 +5,15 @@
     <input type="hidden" name="gid" th:field="*{gid}">
     <div class="error" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></div>
 
+    <dl th:if="${categories != null && !categories.isEmpty()}">
+        <dt th:text="#{분류}"></dt>
+        <dd>
+                <span th:each="c, status : ${categories}">
+                    <input type="radio" name="category" th:value="${c}" th:field="*{category}" th:id="${'category_' + status.index}">
+                    <label th:for="${'category_' + status.index}" th:text="${c}"></label>
+                </span>
+        </dd>
+    </dl>
     <dl>
         <dt th:text="#{제목}"></dt>
         <dd>
@@ -44,11 +53,12 @@
         </dd>
     </dl>
     <dl>
-        <dt th:text="#{파일첨부}">
+        <dt th:text="#{파일첨부}"></dt>
+        <dd>
             <button type="button" th:text="#{파일_업로드}" class="upload_files" data-location="attach"></button>
 
             <div class="uploaded_files" id="attach_files"></div>
-        </dt>
+        </dd>
     </dl>
     <script th:replace="~{common/_file_tpl::tpl_editor}"></script>
     <script th:replace="~{common/_file_tpl::tpl_file}"></script>

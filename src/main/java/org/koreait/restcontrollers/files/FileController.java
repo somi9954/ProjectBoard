@@ -47,7 +47,7 @@ public class FileController {
      * @param id 다운로드할 파일의 고유 번호
      */
     @RequestMapping("/download/{id}")
-    public void download(@PathVariable Long id) {
+    public void download(@PathVariable("id") Long id) {
         downloadService.download(id);
     }
 
