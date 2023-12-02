@@ -8,6 +8,7 @@ import org.koreait.commons.ScriptExceptionProcess;
 import org.koreait.commons.constants.BoardAuthority;
 import org.koreait.commons.menus.Menu;
 import org.koreait.entities.Board;
+import org.koreait.models.board.config.BoardConfigDeleteService;
 import org.koreait.models.board.config.BoardConfigInfoService;
 import org.koreait.models.board.config.BoardConfigSaveService;
 import org.springframework.stereotype.Controller;
@@ -26,6 +27,7 @@ public class BoardController implements ScriptExceptionProcess {
     private final HttpServletRequest request;
     private final BoardConfigSaveService saveService;
     private final BoardConfigInfoService infoService;
+    private final BoardConfigDeleteService deleteService;
 
     @GetMapping
     public String list(@ModelAttribute BoardSearch search, Model model) {
@@ -39,22 +41,25 @@ public class BoardController implements ScriptExceptionProcess {
         return "admin/board/list";
     }
 
-    @DeleteMapping
-    public String deleteList(@RequestParam(name = "idx", required = false) List<Integer> idxes, Model model) {
+    @PatchMapping
+    public String updateList(@RequestParam(name="idx", required = false) List<Integer> idxes, Model model) {
 
-        // 삭제 성공시 부모창 새로고침
+        saveService.update(idxes);
+
+
+        // 수정 완료시 부모창을 새로고침.
         model.addAttribute("script", "parent.location.reload();");
 
         return "common/_execute_script";
     }
 
-    @PatchMapping
-    public String updatelist(@RequestParam(name="idx", required = false) List<Integer> idxes, Model model) {
+    @DeleteMapping
+    public String deleteList(@RequestParam(name="idx", required = false) List<Integer> idxes, Model model) {
 
-        saveService.update(idxes);
+        deleteService.delete(idxes);
 
+        // 삭제 성공시 부모창 새로고침
         model.addAttribute("script", "parent.location.reload();");
-
         return "common/_execute_script";
     }
 
@@ -68,6 +73,9 @@ public class BoardController implements ScriptExceptionProcess {
     @GetMapping("/edit/{bId}")
     public String update(@PathVariable("bId") String bId, Model model) {
         commonProcess("edit", model);
+
+        BoardConfigForm form = infoService.getForm(bId);
+        model.addAttribute("boardConfigForm", form);
 
         return "admin/board/edit";
     }
@@ -86,7 +94,7 @@ public class BoardController implements ScriptExceptionProcess {
 
         return "redirect:/admin/board";
     }
-    
+
     private void commonProcess(String mode, Model model) {
         String pageTitle = "게시판 목록";
         mode = Objects.requireNonNullElse(mode, "list");

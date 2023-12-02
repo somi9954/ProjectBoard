@@ -1,12 +1,12 @@
 server:
-  port: 3000
+  port: 3001
 
 spring:
   # 데이터베이스 설정
   datasource:
     driverClassName: oracle.jdbc.driver.OracleDriver
     url: jdbc:oracle:thin:@localhost:1521:orcl
-    username: PROJECT
+    username: PROJECT2
     password: _aA123456
 
   # JPA 설정

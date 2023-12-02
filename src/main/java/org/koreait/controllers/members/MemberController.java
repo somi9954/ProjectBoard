@@ -9,10 +9,7 @@ import org.koreait.models.member.MemberSaveService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @Controller
@@ -44,7 +41,7 @@ public class MemberController implements CommonProcess {
     }
 
     @GetMapping("/login")
-    public String login(String redirectURL, Model model) {
+    public String login(@RequestParam(value = "redirectURL", required = false) String redirectURL, Model model) {
         commonProcess(model, Utils.getMessage("로그인", "common"));
         
         model.addAttribute("redirectURL", redirectURL);

@@ -2,6 +2,7 @@ package org.koreait.models.board.config;
 
 import lombok.RequiredArgsConstructor;
 import org.koreait.commons.Utils;
+import org.koreait.commons.exceptions.AlertException;
 import org.koreait.entities.Board;
 import org.koreait.repositories.BoardRepository;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,19 @@ public class BoardConfigDeleteService {
      * @param idxes
      */
     public void delete(List<Integer> idxes) {
+        if (idxes == null || idxes.isEmpty()) {
+            throw new AlertException("삭제할 게시판을 선택하세요.");
+        }
 
+
+        for (int idx : idxes) {
+            String bId = utils.getParam("bId_" + idx);
+            Board board = repository.findById(bId).orElse(null);
+            if (board == null) continue;
+
+            repository.delete(board);
+        }
+
+        repository.flush();
     }
 }

@@ -1,27 +1,56 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-    <th:block th:fragment="common" th:object="${boardForm}">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<th:block th:fragment="common" th:object="${boardForm}">
+    <input type="hidden" name="gid" th:field="*{gid}">
+    <div class="error" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></div>
 
-        <dl>
-            <dt>제목</dt>
-            <dd>
-                <input type="text" name="subject" th:field="*{subject}">
-                <div class="error" th:each="err : ${#fields.errors('subject')}" th:text="${err}"></div>
-            </dd>
-        </dl>
-        <dl>
-            <dt>작성자</dt>
-            <dd>
-                <input type="text" name="poster" th:field="*{poster}">
-                <div class="error" th:each="err : ${#fields.errors('poster')}" th:text="${err}"></div>
-            </dd>
-        </dl>
-        <dl>
-            <dt>내용</dt>
-            <dd>
-                <textarea name="content" id="content" th:field="*{content}"></textarea>
-                <div class="error" th:each="err : ${#fields.errors('content')}" th:text="${err}"></div>
-            </dd>
-        </dl>
-    </th:block>
+    <dl>
+        <dt th:text="#{제목}"></dt>
+        <dd>
+            <input type="text" name="subject" th:field="*{subject}">
+            <div class="error" th:each="err : ${#fields.errors('subject')}" th:text="${err}"></div>
+        </dd>
+    </dl>
+    <dl>
+        <dt th:text="#{작성자}"></dt>
+        <dd>
+            <input type="text" name="poster" th:field="*{poster}">
+            <div class="error" th:each="err : ${#fields.errors('poster')}" th:text="${err}"></div>
+        </dd>
+    </dl>
+    <dl sec:authorize="isAnonymous()">
+        <dt th:text="#{비밀번호}"></dt>
+        <dd>
+            <input type="password" name="guestPw" th:placeholder="#{게시글_수정_삭제시_비밀번호}">
+        </dd>
+    </dl>
+    <dl sec:authorize="hasAuthority('ADMIN')">
+        <dt th:text="#{공지사항}"></dt>
+        <dd>
+            <input type="checkbox" name="notice" value="true" id="notice_true">
+            <label for="notice_true" th:text="#{적용하기}"></label>
+        </dd>
+    </dl>
+    <dl>
+        <dt th:text="#{내용}"></dt>
+        <dd>
+            <textarea name="content" id="content" th:field="*{content}"></textarea>
+            <div class="error" th:each="err : ${#fields.errors('content')}" th:text="${err}"></div>
+
+            <button type="button" th:text="#{이미지_추가}" class="upload_files" data-location="editor" data-image-only="true"></button>
+
+            <div class="uploaded_files" id="editor_files"></div>
+        </dd>
+    </dl>
+    <dl>
+        <dt th:text="#{파일첨부}">
+            <button type="button" th:text="#{파일_업로드}" class="upload_files" data-location="attach"></button>
+
+            <div class="uploaded_files" id="attach_files"></div>
+        </dt>
+    </dl>
+    <script th:replace="~{common/_file_tpl::tpl_editor}"></script>
+    <script th:replace="~{common/_file_tpl::tpl_file}"></script>
+</th:block>
 </html>
