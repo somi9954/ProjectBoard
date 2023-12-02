@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @Controller("adminBoardController")
@@ -36,6 +37,14 @@ public class BoardController implements ScriptExceptionProcess {
         model.addAttribute("pagination", data.getPagination());
 
         return "admin/board/list";
+    }
+
+    @PatchMapping
+    public String updatelist(@RequestParam(name="idx", required = false) List<Integer> idxes, Model model) {
+
+        model.addAttribute("script", "parent.location.reload();");
+
+        return "common/_execute_script";
     }
 
     @GetMapping("/add")
