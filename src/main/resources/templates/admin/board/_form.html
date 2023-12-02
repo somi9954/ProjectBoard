@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <th:block th:fragment="common" th:object="${boardConfigForm}">
+        <div class="errors" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></div>
+        <table class="table-cols">
+            <tr>
+                <th>게시판 아이디</th>
+                <td>
+                    <input type="text" name="bId" th:field="*{bId}">
+                    <div class="errors" th:each="err : ${#fields.errors('bId')}" th:text="${err}"></div>
+                </td>
+            </tr>
+            <tr>
+                <th>게시판 이름</th>
+                <td>
+                    <input type="text" name="bName" th:field="*{bName}">
+                    <div class="errors" th:each="err : ${#fields.errors('bName')}" th:text="${err}"></div>
+                </td>
+            </tr>
+            <tr>
+                <th>사용여부</th>
+                <td>
+                    <span>
+                        <input type="radio" name="active" value="true" id="active_true" th:field="*{active}">
+                        <label for="active_true">사용</label>
+                    </span>
+                    <span>
+                        <input type="radio" name="active" value="false" id="active_false" th:field="*{active}">
+                        <label for="active_false">미사용</label>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <th>글쓰기 권한</th>
+                <td>
+                    <span>
+                        <input type="radio" name="authority" value="ALL" id="authority_all" th:field="*{authority}">
+                        <label for="authority_all">전체(비회원 + 회원 + 관리자)</label>
+                    </span>
+                    <span>
+                        <input type="radio" name="authority" value="MEMBER" id="authority_member" th:field="*{authority}">
+                        <label for="authority_member">회원</label>
+                    </span>
+                    <span>
+                        <input type="radio" name="authority" value="ADMIN" id="authority_admin" th:field="*{authority}">
+                        <label for="authority_admin">관리자</label>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <th>분류</th>
+                <td>
+                    <textarea name="category" placeholder="분류가 여러개인 경우는 엔터키를 눌러서 줄개행 하세요..." th:field="*{category}"></textarea>
+                </td>
+            </tr>
+        </table>
+    </th:block>
+</html>
