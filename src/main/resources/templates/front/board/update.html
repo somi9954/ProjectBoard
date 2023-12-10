@@ -4,9 +4,12 @@
       layout:decorate="~{front/layouts/main}">
 
 <main layout:fragment="content">
-    <form name="frmSave" th:action="@{/board/save}" autocomplete="off">
+    <h1>
+        <a th:href="@{/board/list/{bId}(bId=${board.bId})}" th:text="${board.bName}"></a>
+    </h1>
+    <form name="frmSave" method="post" th:action="@{/board/save}" autocomplete="off" th:object="${boardForm}">
         <input type="hidden" name="mode" value="update">
-        <input type="hidden" name="seq" value="">
+        <input type="hidden" name="seq" th:value="*{seq}">
 
         <th:block th:replace="~{front/board/_form::common}"></th:block>
 

@@ -32,9 +32,11 @@ public class FileController {
      * @return 업로드된 파일 정보를 담은 JSON 응답 데이터
      */
     @PostMapping("/upload")
-    public ResponseEntity<JSONData<List<FileInfo>>> uploadPs(@RequestParam(value = "files", required = false) MultipartFile[] files,
-                                                             @RequestParam(value = "gid" ,required = false) String gid,
-                                                             @RequestParam(value = "location" , required = false) String location) {
+    public ResponseEntity<JSONData<List<FileInfo>>> uploadPs(
+            @RequestParam(value = "files", required = false) MultipartFile[] files,
+            @RequestParam(value = "gid", required = false) String gid,
+            @RequestParam(value = "location", required = false) String location) {
+
         List<FileInfo> items = uploadService.upload(files, gid, location);
 
         JSONData<List<FileInfo>> data = new JSONData<>(items);

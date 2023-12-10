@@ -10,7 +10,8 @@ import java.util.UUID;
 @Data
 public class BoardForm {
 
-    private String mode;
+    private String mode = "write";
+
     private Long seq;
 
     private String bId;
@@ -19,13 +20,13 @@ public class BoardForm {
 
     private String category;
 
-    @NotBlank(message="제목을 입력하세요.")
+    @NotBlank
     private String subject;
 
-    @NotBlank(message="작성자를 입력하세요.")
+    @NotBlank
     private String poster;
 
-    @NotBlank(message="내용을 입력하세요.")
+    @NotBlank
     private String content;
 
     private boolean notice;
@@ -33,6 +34,5 @@ public class BoardForm {
     private String guestPw;
 
     private List<FileInfo> editorImages;
-
     private List<FileInfo> attachFiles;
 }

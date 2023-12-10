@@ -41,7 +41,7 @@ public class MemberController implements CommonProcess {
     }
 
     @GetMapping("/login")
-    public String login(@RequestParam(value = "redirectURL", required = false) String redirectURL, Model model) {
+    public String login(@RequestParam(name = "redirectURL", required = false) String redirectURL, Model model) {
         commonProcess(model, Utils.getMessage("로그인", "common"));
         
         model.addAttribute("redirectURL", redirectURL);

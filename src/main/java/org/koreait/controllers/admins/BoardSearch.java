@@ -13,5 +13,4 @@ public class BoardSearch {
     private String skey;
     private List<Boolean> active;
     private List<String> authority;
-
 }

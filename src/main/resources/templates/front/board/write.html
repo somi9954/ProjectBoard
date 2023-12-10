@@ -4,9 +4,11 @@
     layout:decorate="~{front/layouts/main}">
 
 <main layout:fragment="content">
+    <h1>
+        <a th:href="@{/board/list/{bId}(bId=${board.bId})}" th:text="${board.bName}"></a>
+    </h1>
     <form name="frmSave" method="POST" th:action="@{/board/save}" autocomplete="off">
         <input type="hidden" name="mode" value="write">
-        <input type="hidden" name="bId" value="">
 
         <th:block th:replace="~{front/board/_form::common}"></th:block>
 

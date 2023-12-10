@@ -3,11 +3,12 @@ package org.koreait.models.board.config;
 import com.querydsl.core.BooleanBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.codehaus.groovy.util.StringUtil;
 import org.koreait.commons.ListData;
+import org.koreait.commons.MemberUtil;
 import org.koreait.commons.Pagination;
 import org.koreait.commons.Utils;
 import org.koreait.commons.constants.BoardAuthority;
+import org.koreait.commons.exceptions.AuthorizationException;
 import org.koreait.controllers.admins.BoardConfigForm;
 import org.koreait.controllers.admins.BoardSearch;
 import org.koreait.entities.Board;
@@ -19,7 +20,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -33,6 +33,7 @@ public class BoardConfigInfoService {
 
     private final BoardRepository repository;
     private final HttpServletRequest request;
+    private final MemberUtil memberUtil;
 
     public Board get(String bId) {
         Board data = repository.findById(bId).orElseThrow(BoardNotFoundException::new);
@@ -40,10 +41,31 @@ public class BoardConfigInfoService {
         return data;
     }
 
-    public BoardConfigForm getForm (String bId) {
-        Board board = get(bId) ;
+    public Board get(String bId, boolean checkAuthority) {
+        Board data = get(bId);
+        if (!checkAuthority) {
+            return data;
+        }
 
-        BoardConfigForm  form = new ModelMapper().map(board, BoardConfigForm.class);
+        // 글쓰기 권한 체크
+        BoardAuthority authority = data.getAuthority();
+        if (authority != BoardAuthority.ALL) {
+            if (!memberUtil.isLogin()) {
+                throw new AuthorizationException();
+            }
+
+            if (authority == BoardAuthority.ADMIN) {
+                throw new AuthorizationException();
+            }
+        }
+
+        return data;
+    }
+
+    public BoardConfigForm getForm(String bId) {
+        Board board = get(bId);
+
+        BoardConfigForm form = new ModelMapper().map(board, BoardConfigForm.class);
         form.setAuthority(board.getAuthority().name());
         form.setMode("edit");
 
@@ -58,21 +80,21 @@ public class BoardConfigInfoService {
 
         /* 검색 처리 S */
         QBoard board = QBoard.board;
-
-        // 통합 검색
+        // 키워드 검색
         String sopt = Objects.requireNonNullElse(search.getSopt(), "ALL");
         String skey = search.getSkey();
         if (StringUtils.hasText(skey)) {
             skey = skey.trim();
 
-            if (sopt.equals("bId")) { // 게시판 아이디
+            if (sopt.equals("bId")) { // 게시판 아이디 
                 andBuilder.and(board.bId.contains(skey));
             } else if (sopt.equals("bName")) { // 게시판 이름
                 andBuilder.and(board.bName.contains(skey));
-            } else { // 통합검색
+
+            } else { // 통합 검색 
                 BooleanBuilder orBuilder = new BooleanBuilder();
                 orBuilder.or(board.bId.contains(skey))
-                         .or(board.bName.contains(skey));
+                        .or(board.bName.contains(skey));
 
                 andBuilder.and(orBuilder);
             }
@@ -85,15 +107,12 @@ public class BoardConfigInfoService {
         }
 
         // 글쓰기 권한
-        List<BoardAuthority> authorites = search.getAuthority() == null ? null : search.getAuthority().stream().map(BoardAuthority::valueOf).toList();
-        if (authorites != null && !authorites.isEmpty()) {
+        List<BoardAuthority> authorities = search.getAuthority() == null ? null : search.getAuthority().stream().map(BoardAuthority::valueOf).toList();
 
-            andBuilder.and(board.authority.in(authorites));
+        if (authorities != null && !authorities.isEmpty()) {
+            andBuilder.and(board.authority.in(authorities));
         }
-
         /* 검색 처리 E */
-
-
 
         Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(desc("createdAt")));
 

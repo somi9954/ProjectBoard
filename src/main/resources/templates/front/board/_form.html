@@ -1,66 +1,88 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<th:block th:fragment="common" th:object="${boardForm}">
-    <input type="hidden" name="gid" th:field="*{gid}">
-    <div class="error" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></div>
+        xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <th:block th:fragment="common" th:object="${boardForm}">
+        <input type="hidden" name="bId" th:field="*{bId}">
+        <input type="hidden" name="gid" th:field="*{gid}">
+        <div class="error" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></div>
 
-    <dl th:if="${categories != null && !categories.isEmpty()}">
-        <dt th:text="#{분류}"></dt>
-        <dd>
+        <dl th:if="${categories != null && !categories.isEmpty()}">
+            <dt th:text="#{분류}"></dt>
+            <dd>
                 <span th:each="c, status : ${categories}">
                     <input type="radio" name="category" th:value="${c}" th:field="*{category}" th:id="${'category_' + status.index}">
                     <label th:for="${'category_' + status.index}" th:text="${c}"></label>
                 </span>
-        </dd>
-    </dl>
-    <dl>
-        <dt th:text="#{제목}"></dt>
-        <dd>
-            <input type="text" name="subject" th:field="*{subject}">
-            <div class="error" th:each="err : ${#fields.errors('subject')}" th:text="${err}"></div>
-        </dd>
-    </dl>
-    <dl>
-        <dt th:text="#{작성자}"></dt>
-        <dd>
-            <input type="text" name="poster" th:field="*{poster}">
-            <div class="error" th:each="err : ${#fields.errors('poster')}" th:text="${err}"></div>
-        </dd>
-    </dl>
-    <dl sec:authorize="isAnonymous()">
-        <dt th:text="#{비밀번호}"></dt>
-        <dd>
-            <input type="password" name="guestPw" th:placeholder="#{게시글_수정_삭제시_비밀번호}">
-        </dd>
-    </dl>
-    <dl sec:authorize="hasAuthority('ADMIN')">
-        <dt th:text="#{공지사항}"></dt>
-        <dd>
-            <input type="checkbox" name="notice" value="true" id="notice_true">
-            <label for="notice_true" th:text="#{적용하기}"></label>
-        </dd>
-    </dl>
-    <dl>
-        <dt th:text="#{내용}"></dt>
-        <dd>
-            <textarea name="content" id="content" th:field="*{content}"></textarea>
-            <div class="error" th:each="err : ${#fields.errors('content')}" th:text="${err}"></div>
+            </dd>
+        </dl>
+        <dl>
+            <dt th:text="#{제목}"></dt>
+            <dd>
+                <input type="text" name="subject" th:field="*{subject}">
+                <div class="error" th:each="err : ${#fields.errors('subject')}" th:text="${err}"></div>
+            </dd>
+        </dl>
+        <dl>
+            <dt th:text="#{작성자}"></dt>
+            <dd>
+                <input type="text" name="poster" th:field="*{poster}">
+                <div class="error" th:each="err : ${#fields.errors('poster')}" th:text="${err}"></div>
+            </dd>
+        </dl>
+        <dl sec:authorize="isAnonymous()">
+            <dt th:text="#{비밀번호}"></dt>
+            <dd>
+                <input type="password" name="guestPw" th:placeholder="#{게시글_수정_삭제시_비밀번호}">
+                <div class="error" th:each="err : ${#fields.errors('guestPw')}" th:text="${err}"></div>
+            </dd>
+        </dl>
+        <dl sec:authorize="hasAuthority('ADMIN')">
+            <dt th:text="#{공지사항}"></dt>
+            <dd>
+                <input type="checkbox" name="notice" value="true" id="notice_true">
+                <label for="notice_true" th:text="#{적용하기}"></label>
+            </dd>
+        </dl>
+        <dl>
+            <dt th:text="#{내용}"></dt>
+            <dd>
+                <textarea name="content" id="content" th:field="*{content}"></textarea>
+                <div class="error" th:each="err : ${#fields.errors('content')}" th:text="${err}"></div>
 
-            <button type="button" th:text="#{이미지_추가}" class="upload_files" data-location="editor" data-image-only="true"></button>
+                <button type="button" th:text="#{이미지_추가}" class="upload_files" data-location="editor" data-image-only="true"></button>
 
-            <div class="uploaded_files" id="editor_files"></div>
-        </dd>
-    </dl>
-    <dl>
-        <dt th:text="#{파일첨부}"></dt>
-        <dd>
-            <button type="button" th:text="#{파일_업로드}" class="upload_files" data-location="attach"></button>
+                <div class="uploaded_files" id="editor_files">
+                    <span th:if="*{editorImages != null}"
+                          th:each="file : *{editorImages}" th:object="${file}"
+                          class="file_items" th:id="*{'file_' + id}">
+                        <a th:href="@{/file/download/{id}(id=*{id})}" th:text="*{fileName}"></a>
+                        <i class="xi-arrow-top insert_editor" th:data-url="*{fileUrl}"></i>
+                        <a th:href="@{/file/delete/{id}(id=*{id})}" onclick="return confirm('정말 삭제하시겠습니까?');" target="ifrmProcess" class="remove">
+                            <i class="xi-close-min"></i>
+                        </a>
+                    </span>
+                </div>
+            </dd>
+        </dl>
+        <dl>
+            <dt th:text="#{파일첨부}"></dt>
+            <dd>
+                <button type="button" th:text="#{파일_업로드}" class="upload_files" data-location="attach"></button>
 
-            <div class="uploaded_files" id="attach_files"></div>
-        </dd>
-    </dl>
-    <script th:replace="~{common/_file_tpl::tpl_editor}"></script>
-    <script th:replace="~{common/_file_tpl::tpl_file}"></script>
-</th:block>
+                <div class="uploaded_files" id="attach_files">
+                    <span th:if="*{attachFiles != null}"
+                          th:each="file : *{attachFiles}" th:object="${file}"
+                          class="file_items" th:id="*{'file_' + id}">
+                        <a th:href="@{/file/download/{id}(id=*{id})}" th:text="*{fileName}"></a>
+
+                        <a th:href="@{/file/delete/{id}(id=*{id})}" onclick="return confirm('정말 삭제하시겠습니까?');" target="ifrmProcess" class="remove">
+                            <i class="xi-close-min"></i>
+                        </a>
+                    </span>
+                </div>
+            </dd>
+        </dl>
+        <script th:replace="~{common/_file_tpl::tpl_editor}"></script>
+        <script th:replace="~{common/_file_tpl::tpl_file}"></script>
+    </th:block>
 </html>

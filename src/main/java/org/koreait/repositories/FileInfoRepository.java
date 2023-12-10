@@ -34,7 +34,7 @@ public interface FileInfoRepository extends JpaRepository<FileInfo, Long>, Query
         if (mode.equals("done")) builder.and(fileInfo.done.eq(true)); // 작업 완료 파일
         else if (mode.equals("undone")) builder.and(fileInfo.done.eq(false)); // 미 완료 파일
 
-        List<FileInfo> items = (List<FileInfo>)findAll(builder, Sort.by(asc("createdDt")));
+        List<FileInfo> items = (List<FileInfo>)findAll(builder, Sort.by(asc("createdAt")));
 
         return items;
     }

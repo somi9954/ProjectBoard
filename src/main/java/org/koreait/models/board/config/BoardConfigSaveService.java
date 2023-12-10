@@ -51,12 +51,13 @@ public class BoardConfigSaveService {
 
         for (int idx : idxes) {
             String bId = utils.getParam("bId_" + idx);
-            Board board =  boardRepository.findById(bId).orElse(null);
+            Board board = boardRepository.findById(bId).orElse(null);
             if (board == null) continue;
 
             String bName = utils.getParam("bName_" + idx);
             boolean active = Boolean.parseBoolean(utils.getParam("active_" + idx));
-            BoardAuthority authority = BoardAuthority.valueOf(utils.getParam("authority_" + idx));
+            BoardAuthority authority =
+                    BoardAuthority.valueOf(utils.getParam("authority_" + idx));
 
             board.setBName(bName);
             board.setActive(active);

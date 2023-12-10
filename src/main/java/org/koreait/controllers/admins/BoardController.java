@@ -94,7 +94,7 @@ public class BoardController implements ScriptExceptionProcess {
 
         return "redirect:/admin/board";
     }
-
+    
     private void commonProcess(String mode, Model model) {
         String pageTitle = "게시판 목록";
         mode = Objects.requireNonNullElse(mode, "list");

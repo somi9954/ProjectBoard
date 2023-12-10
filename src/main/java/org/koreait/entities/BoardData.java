@@ -55,4 +55,5 @@ public class BoardData extends Base {
 
     @Transient
     private List<FileInfo> attachFiles;
+
 }

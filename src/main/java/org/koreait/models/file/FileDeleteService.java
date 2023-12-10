@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -61,5 +62,10 @@ public class FileDeleteService {
 
         repository.delete(item); // 파일 정보 삭제
         repository.flush();
+    }
+
+    public void deleteByGid(String gid) {
+        List<FileInfo> files = infoService.getListAll(gid);
+        files.stream().forEach(file -> delete(file.getId()));
     }
 }
