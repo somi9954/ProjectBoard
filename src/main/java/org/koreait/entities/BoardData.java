@@ -52,6 +52,11 @@ public class BoardData extends Base {
 
     private int viewCnt; // 조회수
 
+    private int commentCnt; // 댓글 수
+
+    @Transient
+    private List<CommentData> comments; // 댓글 목록
+
     @Transient
     private List<FileInfo> editorImages;
 

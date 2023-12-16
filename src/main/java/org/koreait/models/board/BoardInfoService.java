@@ -16,6 +16,7 @@ import org.koreait.commons.Utils;
 import org.koreait.controllers.boards.BoardDataSearch;
 import org.koreait.controllers.boards.BoardForm;
 import org.koreait.entities.*;
+import org.koreait.models.comment.CommentInfoService;
 import org.koreait.models.file.FileInfoService;
 import org.koreait.repositories.BoardDataRepository;
 import org.koreait.repositories.BoardViewRepository;
@@ -33,7 +34,7 @@ public class BoardInfoService {
 
     private final BoardDataRepository boardDataRepository;
     private final BoardViewRepository boardViewRepository;
-
+    private final CommentInfoService commentInfoService;
     private final FileInfoService fileInfoService;
     private final HttpServletRequest request;
     private final EntityManager em;
@@ -84,6 +85,8 @@ public class BoardInfoService {
     public BoardData get(Long seq) {
 
         BoardData data = boardDataRepository.findById(seq).orElseThrow(BoardDataNotFoundException::new);
+
+        data.setComments(commentInfoService.getList(data.getSeq()));
 
         addFileInfo(data);
 

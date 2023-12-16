@@ -1,6 +1,7 @@
-package org.koreait.controllers.comment;
+package org.koreait.controllers.comments;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
@@ -11,6 +12,7 @@ public class CommentForm {
     @NotBlank
     private String poster;
 
+    @Size(min=4)
     private String guestPw;
 
     @NotBlank
