@@ -44,6 +44,8 @@
         <a th:href="@{/board/list/{bId}(bId=${board.bId})}" th:text="#{글목록}"></a>
     </div>
 
+    <th:block th:replace="~{front/board/_comment::comment}"></th:block>
+
     <th:block th:replace="~{front/board/_list::list}"></th:block>
 </main>
 </html>

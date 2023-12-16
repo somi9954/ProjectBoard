@@ -32,6 +32,7 @@ public class CommentSaveService {
 
         CommentData commentData = null;
         Long seq = form.getSeq();
+        System.out.println(form);
         if (seq == null) { // 추가 - 게시글 번호, 회원 번호
             commentData = new CommentData();
             Long boardDataSeq = form.getBoardDataSeq();

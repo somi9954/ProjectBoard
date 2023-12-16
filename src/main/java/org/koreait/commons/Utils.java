@@ -122,4 +122,10 @@ public class Utils {
             return null;
         }
     }
+
+    public String nl2br(String str) {
+        return  str.replaceAll("\\r", "")
+                .replaceAll("\\n", "<br>");
+
+    }
 }

@@ -94,4 +94,25 @@ public class CommentInfoService {
         }
     }
 
+    /**
+     * 수정, 삭제 가능 여부
+     *  버튼 노출 여부 결정
+     *
+     * @param comment
+     * @return
+     */
+    public boolean isEditable(CommentData comment) {
+        Member commentMember = comment.getMember();
+        if (memberUtil.isAdmin() || commentMember == null) { // 관리자이거나 비회원 댓글이면 무조건 노출
+            return true;
+        }
+
+        // 회원 댓글이면 직접 작성한 댓글만 노출
+        if (memberUtil.isLogin() && commentMember != null
+                && commentMember.getUserNo().longValue() == memberUtil.getMember().getUserNo().longValue()) {
+            return true;
+        }
+
+        return false;
+    }
 }
