@@ -50,6 +50,8 @@ public class QBoardData extends EntityPathBase<BoardData> {
 
     public final StringPath subject = createString("subject");
 
+    public final NumberPath<Integer> viewCnt = createNumber("viewCnt", Integer.class);
+
     public QBoardData(String variable) {
         this(BoardData.class, forVariable(variable), INITS);
     }

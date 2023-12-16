@@ -105,6 +105,9 @@ public class BoardController implements ScriptExceptionProcess {
     public String view(@PathVariable("seq") Long seq,
                        @ModelAttribute  BoardDataSearch search, Model model) {
 
+        // 게시글 조회수 업데이트
+        infoService.updateView(seq);
+
         BoardData data = infoService.get(seq);
         boardData = data;
 

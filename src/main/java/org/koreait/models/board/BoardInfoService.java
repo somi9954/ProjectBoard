@@ -15,12 +15,10 @@ import org.koreait.commons.Pagination;
 import org.koreait.commons.Utils;
 import org.koreait.controllers.boards.BoardDataSearch;
 import org.koreait.controllers.boards.BoardForm;
-import org.koreait.entities.BoardData;
-import org.koreait.entities.FileInfo;
-import org.koreait.entities.Member;
-import org.koreait.entities.QBoardData;
+import org.koreait.entities.*;
 import org.koreait.models.file.FileInfoService;
 import org.koreait.repositories.BoardDataRepository;
+import org.koreait.repositories.BoardViewRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -34,12 +32,54 @@ import java.util.Objects;
 public class BoardInfoService {
 
     private final BoardDataRepository boardDataRepository;
+    private final BoardViewRepository boardViewRepository;
+
     private final FileInfoService fileInfoService;
     private final HttpServletRequest request;
     private final EntityManager em;
     private final MemberUtil memberUtill;
     private final HttpSession session;
     private final PasswordEncoder encoder;
+    private final Utils utils;
+
+
+    /**
+     * 조회수 Uid
+     *      비회원 - Utils::guestUid() : ip + User-Agent(브라우저 종류)
+     *      회원 - 회원번호
+     * @return
+     */
+    public int viewUid() {
+        return memberUtill.isLogin() ?
+                memberUtill.getMember().getUserNo().intValue() : utils.guestUid();
+    }
+
+    /**
+     * 게시글 별 조회수 업데이트
+     *
+     * @param seq
+     */
+    public void updateView(Long seq) {
+        // 조회 기록 추가
+        try {
+            BoardView boardView = new BoardView();
+            boardView.setSeq(seq);
+            boardView.setUid(viewUid());
+
+            boardViewRepository.saveAndFlush(boardView);
+        } catch (Exception e) {}
+
+        // 게시글별 총 조회수 산출
+        QBoardView boardView = QBoardView.boardView;
+        long cnt = boardViewRepository.count(boardView.seq.eq(seq));
+
+        // 게시글 데이터에 업데이트(viewCnt)
+        BoardData data = boardDataRepository.findById(seq).orElse(null);
+        if (data == null) return;
+
+        data.setViewCnt((int)cnt);
+        boardDataRepository.flush();
+    }
 
     public BoardData get(Long seq) {
 
