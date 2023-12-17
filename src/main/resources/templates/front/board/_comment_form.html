@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <th:block th:fragment="form" th:object="${boardData}">
+        <form id="frmComment" name="frmComment" method="post" th:action="@{/comment/save}" th:target="${mode == 'update' ? '_self' : 'ifrmProcess'}" autocomplete="off">
+            <input th:if="${mode == 'update'}" type="hidden" name="seq"
+                   th:value="${commentForm.seq}">
+            <input type="hidden" name="boardDataSeq" th:value="*{seq}">
+            <div class="comment_box">
+                <div class="commenter_info">
+                    <th:block th:if="${mode == 'update'}">
+                        <input type="text" name="poster" th:value="${commentForm.poster}" th:placeholder="#{작성자}">
+                        <input th:if="${commentForm.member == null}" type="password" name="guestPw" th:placeholder="#{비밀번호}">
+                    </th:block>
+                    <th:block th:unless="${mode == 'update'}">
+                        <input sec:authorize="isAuthenticated()" type="text" name="poster"  th:placeholder="#{작성자}" th:value="${session.loginMember.userNm}">
+                        <th:block sec:authorize="isAnonymous()">
+                            <input type="text" name="poster" th:placeholder="#{작성자}">
+                            <input type="password" name="guestPw" th:placeholder="#{비밀번호}">
+                        </th:block>
+                    </th:block>
+                </div>
+                <!-- commenter_info -->
+                <div class="content_box" th:if="${mode == 'update'}">
+                    <textarea name="content" th:text="${commentForm.content}"></textarea>
+                    <button type="submit" th:text="#{수정하기}"></button>
+                </div>
+                <div class="content_box" th:unless="${mode == 'update'}">
+                    <textarea name="content"></textarea>
+                    <button type="submit" th:text="#{작성하기}"></button>
+                </div>
+            </div>
+            <!-- comment_box -->
+        </form>
+    </th:block>
+</html>

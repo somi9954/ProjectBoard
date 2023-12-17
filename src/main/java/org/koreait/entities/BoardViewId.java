@@ -2,10 +2,10 @@ package org.koreait.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @EqualsAndHashCode
-@RequiredArgsConstructor
+@NoArgsConstructor
 @AllArgsConstructor
 public class BoardViewId {
     private Long seq;

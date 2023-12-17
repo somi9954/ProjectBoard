@@ -124,8 +124,7 @@ public class Utils {
     }
 
     public String nl2br(String str) {
-        return  str.replaceAll("\\r", "")
+       return str.replaceAll("\\r", "")
                 .replaceAll("\\n", "<br>");
-
     }
 }

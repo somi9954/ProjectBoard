@@ -1,28 +1,14 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org">
 <th:block th:fragment="comment" th:object="${boardData}">
-    <form id="frmComment" name="frmComment" method="post" th:action="@{/comment/save}" target="ifrmProcess" autocomplete="off">
-        <input type="hidden" name="boardDataSeq" th:value="*{seq}">
-        <div class="comment_box">
-            <div class="commenter_info">
-                <input sec:authorize="isAuthenticated()" type="text" name="poster" th:value="${session.loginMember.userNm}" th:placeholder="#{작성자}">
-                <th:block sec:authorize="isAnonymous()">
-                    <input type="text" name="poster" th:placeholder="#{작성자}">
-                    <input type="password" name="guestPw" th:placeholder="#{비밀번호}">
-                </th:block>
-            </div>
-            <!-- commenter_info -->
-            <div class="content_box">
-                <textarea name="content"></textarea>
-                <button type="submit" th:text="#{작성하기}"></button>
-            </div>
-        </div>
-        <!-- comment_box -->
-    </form>
+    <div>Total :
+        <th:block
+                th:text="*{commentCnt < 1000 ? commentCnt : #numbers.formatInteger(commentCnt, 3, 'COMMA')}"></th:block>
+    </div>
+    <th:block th:replace="~{front/board/_comment_form::form}"></th:block>
 
     <ul id="comments" th:if="*{comments != null && !comments.isEmpty()}">
-        <li th:each="comment : *{comments}" th:object="${comment}">
+        <li th:each="comment : *{comments}" th:object="${comment}" th:id="*{'comment_' + seq}">
             <div class="commenter_info">
                 <div class="commenter">
                     <th:block th:text="*{poster}"></th:block>

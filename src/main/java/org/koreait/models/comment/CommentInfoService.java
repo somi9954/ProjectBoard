@@ -10,13 +10,17 @@ import lombok.RequiredArgsConstructor;
 import org.koreait.commons.MemberUtil;
 import org.koreait.commons.Utils;
 import org.koreait.commons.exceptions.AlertBackException;
+import org.koreait.controllers.comments.CommentForm;
 import org.koreait.entities.BoardData;
 import org.koreait.entities.CommentData;
 import org.koreait.entities.Member;
 import org.koreait.entities.QCommentData;
+import org.koreait.models.board.BoardDataNotFoundException;
 import org.koreait.models.board.RequiredPasswordCheckException;
 import org.koreait.repositories.BoardDataRepository;
 import org.koreait.repositories.CommentDataRepository;
+import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,11 +34,20 @@ public class CommentInfoService {
     private final MemberUtil memberUtil;
     private final EntityManager em;
     private final HttpSession session;
+    private final PasswordEncoder encoder;
 
     public CommentData get(Long seq) {
         CommentData comment = commentDataRepository.findById(seq).orElseThrow(CommentNotFoundException::new);
 
         return comment;
+    }
+
+    public CommentForm getForm(Long seq) {
+        CommentData comment = get(seq);
+        CommentForm form = new ModelMapper().map(comment, CommentForm.class);
+        form.setBoardDataSeq(comment.getBoardData().getSeq());
+
+        return form;
     }
 
     /**
@@ -64,10 +77,8 @@ public class CommentInfoService {
      * @param seq
      */
     public void updateCommentCnt(Long seq) {
-        CommentData comment = get(seq);
-        BoardData boardData = comment.getBoardData();
-        Long boardDataSeq = boardData.getSeq();
-        boardData.setCommentCnt(commentDataRepository.getTotal(boardDataSeq));
+        BoardData boardData = boardDataRepository.findById(seq).orElseThrow(BoardDataNotFoundException::new);
+        boardData.setCommentCnt(commentDataRepository.getTotal(seq));
 
         boardDataRepository.flush();
     }
@@ -85,7 +96,7 @@ public class CommentInfoService {
                 session.setAttribute("comment_seq", seq);
                 throw new RequiredPasswordCheckException();
             }
-
+            
         } else { // 로그인 상태 작성
             if (!memberUtil.isLogin()
                     || commentMember.getUserNo().longValue() != memberUtil.getMember().getUserNo().longValue()) {
@@ -114,5 +125,18 @@ public class CommentInfoService {
         }
 
         return false;
+    }
+
+    /**
+     * 비회원 댓글 비밀번호 확인
+     *
+     * @param seq
+     * @param password
+     * @return
+     */
+    public boolean checkGuestPassword(Long seq, String password) {
+        CommentData comment = get(seq);
+
+        return encoder.matches(password, comment.getGuestPw());
     }
 }

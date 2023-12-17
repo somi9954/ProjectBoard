@@ -19,10 +19,11 @@ import org.springframework.validation.Errors;
 public class CommentSaveService {
     private final CommentDataRepository commentDataRepository;
     private final BoardDataRepository boardDataRepository;
+    private final CommentInfoService commentInfoService;
+
     private final CommentFormValidator validator;
     private final MemberUtil memberUtil;
     private final PasswordEncoder encoder;
-    private final CommentInfoService commentInfoService;
 
     public void save(CommentForm form, Errors errors) {
         validator.validate(form, errors);
@@ -53,12 +54,14 @@ public class CommentSaveService {
         }
 
         save(commentData);
+
     }
 
     public void save(CommentData comment) {
 
         commentDataRepository.saveAndFlush(comment);
-
+        
+        // 총 댓글 갯수 업데이트
         Long boardDataSeq = comment.getBoardData().getSeq();
         commentInfoService.updateCommentCnt(boardDataSeq);
     }

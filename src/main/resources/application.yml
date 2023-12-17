@@ -10,7 +10,7 @@ spring:
   datasource:
     driverClassName: oracle.jdbc.driver.OracleDriver
     url: jdbc:oracle:thin:@localhost:1521:orcl
-    username: PROJECT
+    username: PROJECT2
     password: _aA123456
 
   # JPA 설정
@@ -24,7 +24,7 @@ spring:
         use_sql_comments: true
         dialect: org.hibernate.dialect.OracleDialect
     hibernate:
-      ddlAuto: create
+      ddlAuto: update
 
   # 파일 업로드 설정
   servlet:

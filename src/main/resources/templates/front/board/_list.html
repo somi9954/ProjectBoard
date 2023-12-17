@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thhymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <th:block th:fragment="list">
     <h1>
         <a th:href="@{/board/list/{bId}(bId=${board.bId})}" th:text="${board.bName}"></a>
     </h1>
+
     <a th:href="@{/board/write/{bId}(bId=${board.bId})}" th:text="#{글쓰기}"></a>
+
     <nav th:if="${categories != null && !categories.isEmpty()}">
         <a th:href="@{/board/list/{bId}(bId=${board.bId})}" th:text="#{전체}"></a>
         <a th:each="category : ${categories}" th:href="@{/board/list/{bId}(bId=${board.bId}, category=${category})}" th:text="${category}"></a>
@@ -14,7 +16,11 @@
         <li th:unless="${items == null || items.isEmpty()}"
             th:each="item : ${items}" th:object="${item}">
             <a th:href="@{/board/view/{seq}(seq=*{seq})}">
-                <div class="subject" th:text="*{subject}"></div>
+                <div class="subject">
+                    <span th:if="*{notice}">[공지]</span>
+                    <th:block th:text="*{subject}"></th:block>
+                    <th:block th:if="*{commentCnt > 0}" th:text="*{'(' + commentCnt + ')'}"></th:block>
+                </div>
                 <div class="post_info">
                     <span class="poster">
                         <th:block th:text="*{poster}"></th:block>

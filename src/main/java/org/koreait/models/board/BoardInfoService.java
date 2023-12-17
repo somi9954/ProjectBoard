@@ -21,12 +21,18 @@ import org.koreait.models.file.FileInfoService;
 import org.koreait.repositories.BoardDataRepository;
 import org.koreait.repositories.BoardViewRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
+
+import static org.springframework.data.domain.Sort.Order.desc;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +41,7 @@ public class BoardInfoService {
     private final BoardDataRepository boardDataRepository;
     private final BoardViewRepository boardViewRepository;
     private final CommentInfoService commentInfoService;
+
     private final FileInfoService fileInfoService;
     private final HttpServletRequest request;
     private final EntityManager em;
@@ -107,7 +114,7 @@ public class BoardInfoService {
         int page = Utils.getNumber(search.getPage(), 1);
         int limit = Utils.getNumber(search.getLimit(), 20);
         int offset = (page - 1) * limit;
-
+        
         String bId = search.getBId(); // 게시판 아이디
         String sopt  = Objects.requireNonNullElse(search.getSopt(), "subject_content"); // 검색 옵션
         String skey = search.getSkey(); // 검색 키워드
@@ -197,7 +204,7 @@ public class BoardInfoService {
         System.out.println("check : " + data.getMember() == null);
         if (data.getMember() != null) {
 
-            // 회원 등록 게시물이만 직접 작성한 게시글인 경우
+         // 회원 등록 게시물이만 직접 작성한 게시글인 경우
             Member boardMember = data.getMember();
             Member member = memberUtill.getMember();
             return memberUtill.isLogin() && boardMember.getUserNo().longValue() == member.getUserNo().longValue();
@@ -221,5 +228,15 @@ public class BoardInfoService {
         }
 
         return encoder.matches(password, guestPw);
+    }
+
+    public List<BoardData> getList(String bId, int num) {
+
+        QBoardData boardData = QBoardData.boardData;
+        num = Utils.getNumber(num, 10);
+        Pageable pageable = PageRequest.of(0, num, Sort.by(desc("createdAt")));
+        Page<BoardData> data = boardDataRepository.findAll(boardData.board.bId.eq(bId), pageable);
+
+        return data.getContent();
     }
 }

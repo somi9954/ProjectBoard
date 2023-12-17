@@ -13,6 +13,9 @@ public class CommentDeleteService {
     private final CommentDataRepository repository;
 
     public BoardData delete(Long seq) {
+
+        infoService.isMine(seq);
+
         CommentData commentData = infoService.get(seq);
         BoardData boardData = commentData.getBoardData();
 
